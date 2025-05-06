@@ -172,7 +172,7 @@ MainTab:CreateToggle({
                             end
                         end
                     end)
-                    task.wait(30)
+                    task.wait(5)
                 end
             end)
         end
