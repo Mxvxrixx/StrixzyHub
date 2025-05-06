@@ -4,8 +4,8 @@ local Window = Rayfield:CreateWindow({
     Name = "Untitled drill game By Strixzy",
     LoadingTitle = "Untitled drill game",
     LoadingSubtitle = "Made by Strixzy",
-    Theme = selectedTheme,
-
+    Theme = "Default",
+    
     DisableBuildWarnings = false,
     DisableRayfieldPrompts = false,
 
@@ -16,7 +16,7 @@ local Window = Rayfield:CreateWindow({
     },
 
     Discord = {
-        Enabled = false, 
+        Enabled = false,
         Invite = "noinvitelink",
         RememberJoins = true
     },
@@ -64,6 +64,7 @@ MainTab:CreateToggle({
             for _, tool in ipairs(handDrillsFolder:GetChildren()) do
                 table.insert(drillNames, tool.Name)
             end
+
             local function equipDrill()
                 for _, tool in ipairs(backpack:GetChildren()) do
                     if table.find(drillNames, tool.Name) then
@@ -76,7 +77,9 @@ MainTab:CreateToggle({
                     end
                 end
             end
+
             equipDrill()
+
             task.spawn(function()
                 while ToggleOreFarm do
                     pcall(function()
@@ -88,11 +91,13 @@ MainTab:CreateToggle({
                     task.wait(1)
                 end
             end)
+
             task.spawn(function()
                 while ToggleOreFarm do
                     pcall(function()
                         RequestRandomOre:FireServer()
                     end)
+                    task.wait()
                 end
             end)
         end
@@ -115,14 +120,19 @@ MainTab:CreateToggle({
                         local player = game.Players.LocalPlayer
                         local character = player.Character or player.CharacterAdded:Wait()
                         local hrp = character:FindFirstChild("HumanoidRootPart")
+
                         if hrp then
                             local originalCFrame = hrp.CFrame
+
                             hrp.CFrame = CFrame.new(Vector3.new(-395.50, 92.04, 269.37))
+
                             task.wait(1)
+
                             for i = 1, 10 do
                                 SellAll:FireServer()
                                 task.wait()
                             end
+
                             hrp.CFrame = originalCFrame
                         end 
                     end)
@@ -218,19 +228,6 @@ UiTab:CreateButton({
     Callback = function()
         loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/refs/heads/master/source"))()
     end,
-})
-
-local themes = {"Default","AmberGlow","Amethyst","Bloom","DarkBlue","Green","Light","Ocean","Serenity"}
-
-UiTab:CreateDropdown({
-    Name = "Themes UI",
-    Options = themes,
-    Flag = "uithemes",
-    Callback = function(value)
-        selectedTheme = value[1]
-        Rayfield:Destroy()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/Mxvxrixx/StrixzyHub/refs/heads/main/Loader.lua"))()
-    end
 })
 
 local lastMoveTime = tick()
