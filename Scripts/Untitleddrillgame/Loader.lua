@@ -339,20 +339,11 @@ UiTab:CreateButton({
     end,
 })
 
-local jumpCooldown = 600
-local lastJumpTime = tick()
-
-game:GetService("RunService").Heartbeat:Connect(function()
-    local player = game.Players.LocalPlayer
-    local character = player.Character
-    local humanoid = character and character:FindFirstChildOfClass("Humanoid")
-
-    if humanoid then
-        if (tick() - lastJumpTime) >= jumpCooldown and humanoid:GetState() ~= Enum.HumanoidStateType.Jumping and humanoid:GetState() ~= Enum.HumanoidStateType.Freefall then
-            humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
-            lastJumpTime = tick()
-        end
-    end
+local vu = game:GetService("VirtualUser")
+game:GetService("Players").LocalPlayer.Idled:connect(function()
+    vu:Button2Down(Vector2.new(0,0), workspace.CurrentCamera.CFrame)
+    wait(1)
+    vu:Button2Up(Vector2.new(0,0), workspace.CurrentCamera.CFrame)
 end)
 
 Rayfield:LoadConfiguration()
