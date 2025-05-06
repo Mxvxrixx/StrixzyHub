@@ -1,3 +1,4 @@
+local selectedTheme = "DarkBlue"
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 local Window = Rayfield:CreateWindow({
