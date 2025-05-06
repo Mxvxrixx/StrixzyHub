@@ -233,7 +233,7 @@ UiTab:CreateButton({
 local themes = {"Default","AmberGlow","Amethyst","Bloom","DarkBlue","Green","Light","Ocean","Serenity"}
 
 UiTab:CreateDropdown({
-    Name = "เลือกธีม UI",
+    Name = "Themes UI",
     Options = themes,
     Flag = "SelectedTheme",
     Callback = function(value)
