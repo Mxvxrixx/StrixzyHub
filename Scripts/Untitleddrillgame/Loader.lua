@@ -1,12 +1,3 @@
-local selectedTheme = "Default"
-
-pcall(function()
-    local saved = readfile("StrixzyConfig/Untitleddrillgame.json")
-    local decoded = game:GetService("HttpService"):JSONDecode(saved)
-    selectedTheme = decoded.Flags.SelectedTheme or "Default"
-end)
-
-
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 local Window = Rayfield:CreateWindow({
