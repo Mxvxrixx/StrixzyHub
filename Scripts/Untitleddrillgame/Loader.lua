@@ -107,27 +107,6 @@ MainTab:CreateToggle({
 
 local RebirthSection = MainTab:CreateSection("Auto Rebirth")
 
-local ToggleAutoRebirth = false
-
-MainTab:CreateToggle({
-    Name = "Auto Rebirth",
-    CurrentValue = false,
-    Flag = "AutoRebirthToggle",
-    Callback = function(Value)
-        ToggleAutoRebirth = Value
-        if Value then
-            task.spawn(function()
-                while ToggleAutoRebirth do
-                    pcall(function()
-                        game:GetService("ReplicatedStorage"):WaitForChild("Packages"):WaitForChild("Knit"):WaitForChild("Services"):WaitForChild("RebirthService"):WaitForChild("RE"):WaitForChild("RebirthRequest"):FireServer()
-                    end)
-                    task.wait(0.1)
-                end
-            end)
-        end
-    end,
-})
-
 local ToggleAutoLock = false
 local selectedOreNames = {}
 
@@ -173,6 +152,58 @@ MainTab:CreateToggle({
         end
     end
 })
+
+local rebirthsValue = game:GetService("Players").LocalPlayer.leaderstats.Rebirths.Value + 1
+
+local oreNamesForRebirth = {
+    [1] = {"Uranium", "Adamantite"},
+    [2] = {"Radiant Quartz", "Celestine"},
+    [3] = {"Obscurite", "Lunaris"},
+    [4] = {"Elerium", "Stellarite"},
+    [5] = {"Phantomite", "Bloodsteel"}
+}
+
+local function checkAndRebirth()
+    local selectedOres = oreNamesForRebirth[rebirthsValue]
+    if selectedOres then
+        local backpack = game:GetService("Players").LocalPlayer:FindFirstChild("Backpack")
+        local foundOres = 0
+
+        if backpack then
+            for _, item in ipairs(backpack:GetChildren()) do
+                for _, oreName in ipairs(selectedOres) do
+                    if item.Name == oreName then
+                        foundOres = foundOres + 1
+                    end
+                end
+            end
+        end
+
+        if foundOres == 2 then
+            pcall(function()
+                game:GetService("ReplicatedStorage"):WaitForChild("Packages"):WaitForChild("Knit"):WaitForChild("Services"):WaitForChild("RebirthService"):WaitForChild("RE"):WaitForChild("RebirthRequest"):FireServer()
+            end)
+        end
+    end
+end
+
+MainTab:CreateToggle({
+    Name = "Auto Rebirth",
+    CurrentValue = false,
+    Flag = "AutoRebirthToggle",
+    Callback = function(Value)
+        ToggleAutoRebirth = Value
+        if Value then
+            task.spawn(function()
+                while ToggleAutoRebirth do
+                    checkAndRebirth()
+                    task.wait(0.1)
+                end
+            end)
+        end
+    end,
+})
+
 
 local SellSelection = MainTab:CreateSection("Auto Sell")
 
@@ -323,6 +354,5 @@ game:GetService("RunService").Heartbeat:Connect(function()
         end
     end
 end)
-
 
 Rayfield:LoadConfiguration()
