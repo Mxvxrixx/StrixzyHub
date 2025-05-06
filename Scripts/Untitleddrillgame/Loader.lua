@@ -1,11 +1,20 @@
+local selectedTheme = "Default"
+
+pcall(function()
+    local saved = readfile("StrixzyConfig/Untitleddrillgame.json")
+    local decoded = game:GetService("HttpService"):JSONDecode(saved)
+    selectedTheme = decoded.Flags.SelectedTheme or "Default"
+end)
+
+
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 local Window = Rayfield:CreateWindow({
     Name = "Untitled drill game By Strixzy",
     LoadingTitle = "Untitled drill game",
     LoadingSubtitle = "Made by Strixzy",
-    Theme = "Default",
-    
+    Theme = selectedTheme,
+
     DisableBuildWarnings = false,
     DisableRayfieldPrompts = false,
 
@@ -228,6 +237,19 @@ UiTab:CreateButton({
     Callback = function()
         loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/refs/heads/master/source"))()
     end,
+})
+
+local themes = {"Default","AmberGlow","Amethyst","Bloom","DarkBlue","Green","Light","Ocean","Serenity"}
+
+UiTab:CreateDropdown({
+    Name = "เลือกธีม UI",
+    Options = themes,
+    Flag = "SelectedTheme",
+    Callback = function(value)
+        selectedTheme = value[1]
+        Rayfield:Destroy()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/Mxvxrixx/StrixzyHub/refs/heads/main/Loader.lua"))()
+    end
 })
 
 local lastMoveTime = tick()
