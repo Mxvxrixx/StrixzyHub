@@ -1,3 +1,4 @@
+-- Theme and Rayfield Setup
 local selectedTheme = "DarkBlue"
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
@@ -6,22 +7,18 @@ local Window = Rayfield:CreateWindow({
     LoadingTitle = "Untitled drill game",
     LoadingSubtitle = "Made by Strixzy",
     Theme = selectedTheme,
-
     DisableBuildWarnings = false,
     DisableRayfieldPrompts = false,
-
     ConfigurationSaving = {
         Enabled = true,
         FolderName = "StrixzyConfig",
         FileName = "Untitleddrillgame"
     },
-
     Discord = {
         Enabled = false,
         Invite = "noinvitelink",
         RememberJoins = true
     },
-
     KeySystem = false,
     KeySettings = {
         Title = "Strixzy Hub",
@@ -34,22 +31,26 @@ local Window = Rayfield:CreateWindow({
     }
 })
 
+-- Services
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Packages = ReplicatedStorage:WaitForChild("Packages")
 local Knit = Packages:WaitForChild("Knit")
 local Services = Knit:WaitForChild("Services")
 local OreService = Services:WaitForChild("OreService")
 local PlotService = Services:WaitForChild("PlotService")
+local Players = game:GetService("Players")
+local localPlayer = Players.LocalPlayer
 
 local SellAll = OreService:WaitForChild("RE"):WaitForChild("SellAll")
 local RequestRandomOre = OreService:WaitForChild("RE"):WaitForChild("RequestRandomOre")
 local CollectDrill = PlotService:WaitForChild("RE"):WaitForChild("CollectDrill")
+local rebirthsValue = localPlayer:WaitForChild("leaderstats"):WaitForChild("Rebirths").Value
 
+-- Main Auto Play Section
 local MainTab = Window:CreateTab("Auto", "swords")
-local Selection = MainTab:CreateSection("Auto Play")
+local PlaySelection = MainTab:CreateSection("Auto Play")
 
 local ToggleOreFarm = false
-
 MainTab:CreateToggle({
     Name = "Auto Drill",
     CurrentValue = false,
@@ -57,6 +58,7 @@ MainTab:CreateToggle({
     Callback = function(Value)
         ToggleOreFarm = Value
         if Value then
+            -- Drill Equipment Logic
             local player = game.Players.LocalPlayer
             local backpack = player:WaitForChild("Backpack")
             local handDrillsFolder = ReplicatedStorage:WaitForChild("HandDrills")
@@ -105,8 +107,8 @@ MainTab:CreateToggle({
     end,
 })
 
+-- Auto Rebirth Section
 local RebirthSection = MainTab:CreateSection("Auto Rebirth")
-
 local ToggleAutoLock = false
 local selectedOreNames = {}
 
@@ -153,14 +155,13 @@ MainTab:CreateToggle({
     end
 })
 
-local rebirthsValue = game:GetService("Players").LocalPlayer.leaderstats.Rebirths.Value + 1
-
+-- Rebirth Logic
 local oreNamesForRebirth = {
-    [1] = {"Uranium", "Adamantite"},
-    [2] = {"Radiant Quartz", "Celestine"},
-    [3] = {"Obscurite", "Lunaris"},
-    [4] = {"Elerium", "Stellarite"},
-    [5] = {"Phantomite", "Bloodsteel"}
+    [0] = {"Uranium", "Adamantite"},
+    [1] = {"Radiant Quartz", "Celestine"},
+    [2] = {"Obscurite", "Lunaris"},
+    [3] = {"Elerium", "Stellarite"},
+    [4] = {"Phantomite", "Bloodsteel"}
 }
 
 local function checkAndRebirth()
@@ -204,9 +205,8 @@ MainTab:CreateToggle({
     end,
 })
 
-
+-- Auto Sell Section
 local SellSelection = MainTab:CreateSection("Auto Sell")
-
 local ToggleSellAll = false
 
 MainTab:CreateToggle({
@@ -224,7 +224,6 @@ MainTab:CreateToggle({
 
                         if hrp then
                             local originalCFrame = hrp.CFrame
-
                             hrp.CFrame = CFrame.new(Vector3.new(-395.50, 92.04, 269.37))
 
                             task.wait(1)
@@ -244,8 +243,8 @@ MainTab:CreateToggle({
     end,
 })
 
+-- Auto Collect Drill/Storage Section
 local CollectSelection = MainTab:CreateSection("Auto Collect Drill/Storage")
-
 local ToggleCollectDrill = false
 
 MainTab:CreateToggle({
@@ -280,20 +279,20 @@ MainTab:CreateToggle({
     end,
 })
 
+-- Shop Tab for Hand Drills, Drills, and Storages
 local ShopTab = Window:CreateTab("Shop", "shopping-basket")
-local ShopSection = ShopTab:CreateSection("Shop Hand Drill")
 
-local BuyHandDrill = OreService:WaitForChild("RE"):WaitForChild("BuyHandDrill")
+-- Hand Drills Section
+local HandDrillsSection = ShopTab:CreateSection("Shop Hand Drills")
 local HandDrillsFolder = ReplicatedStorage:WaitForChild("HandDrills")
-
-local drillsWithCost = {}
+local HanddrillsWithCost = {}
 
 for _, tool in ipairs(HandDrillsFolder:GetChildren()) do
     local cost = tool:GetAttribute("Cost") or 0
-    table.insert(drillsWithCost, {Name = tool.Name, Cost = cost})
+    table.insert(HanddrillsWithCost, {Name = tool.Name, Cost = cost})
 end
 
-table.sort(drillsWithCost, function(a, b)
+table.sort(HanddrillsWithCost, function(a, b)
     return a.Cost < b.Cost
 end)
 
@@ -305,26 +304,146 @@ local function formatNumberWithCommas(n)
 end
 
 local dropdownOptions = {}
-for _, drill in ipairs(drillsWithCost) do
-    table.insert(dropdownOptions, string.format("%s (Cost: %s)", drill.Name, formatNumberWithCommas(drill.Cost)))
+for _, Handdrill in ipairs(HanddrillsWithCost) do
+    table.insert(dropdownOptions, string.format("%s (Cost : %s)", Handdrill.Name, formatNumberWithCommas(Handdrill.Cost)))
 end
 
-local selectedDrill = nil
+local selectedHandDrill = nil
 
 ShopTab:CreateDropdown({
-    Name = "Select Drill",
+    Name = "Select Hand Drill",
     Options = dropdownOptions,
     Callback = function(value)
         local nameOnly = string.match(value[1], "^(.-) %(")
-        selectedDrill = nameOnly
+        selectedHandDrill = nameOnly
     end
 })
 
 ShopTab:CreateButton({
     Name = "Buy Hand Drill",
     Callback = function()
-        if selectedDrill then
-            ReplicatedStorage:WaitForChild("Packages"):WaitForChild("Knit"):WaitForChild("Services"):WaitForChild("OreService"):WaitForChild("RE"):WaitForChild("BuyHandDrill"):FireServer(selectedDrill)
+        if selectedHandDrill then
+            ReplicatedStorage:WaitForChild("Packages"):WaitForChild("Knit"):WaitForChild("Services"):WaitForChild("OreService"):WaitForChild("RE"):WaitForChild("BuyHandDrill"):FireServer(selectedHandDrill)
+        end
+    end
+})
+
+-- Drills Section
+local DrillsSection = ShopTab:CreateSection("Shop Drills")
+local drillsForRebirth = {
+    [0] = {"Standard Drill", "Reinforced Drill", "Twin Drill", "Tri Drill", "Charged Drill", "Plasma Drill", "Laser Drill", "Quad Drill", "Thermal Drill", "Surge Drill", "Surge Drill", "Surge Drill", "Surge Drill"},
+    [1] = {"Fusion Drill", "Nuclear Drill"},
+    [2] = {"Quantum Drill", "Colossal Drill"},
+    [3] = {"Graviton Drill", "Singularity Drill"},
+    [4] = {"Nebula Drill"},
+    [5] = {"Starflare Drill"}
+}
+
+local drillNameSet = {}
+for i = 0, rebirthsValue do
+    local drills = drillsForRebirth[i]
+    if drills then
+        for _, name in ipairs(drills) do
+            drillNameSet[name] = true
+        end
+    end
+end
+
+local DrillsFolder = ReplicatedStorage:WaitForChild("Drills")
+local DrillsWithCost = {}
+
+for _, model in ipairs(DrillsFolder:GetChildren()) do
+    if model:IsA("Model") and drillNameSet[model.Name] then
+        local cost = model:GetAttribute("Cost") or 0
+        table.insert(DrillsWithCost, {Name = model.Name, Cost = cost})
+    end
+end
+
+table.sort(DrillsWithCost, function(a, b)
+    return a.Cost < b.Cost
+end)
+
+local drilldropdownOptions = {}
+for _, drill in ipairs(DrillsWithCost) do
+    table.insert(drilldropdownOptions, string.format("%s (Cost : %s)", drill.Name, formatNumberWithCommas(drill.Cost)))
+end
+
+local selectedDrillRebirth = nil
+
+ShopTab:CreateDropdown({
+    Name = "Select Drill",
+    Options = drilldropdownOptions,
+    Callback = function(value)
+        local nameOnly = string.match(value[1], "^(.-) %(")
+        selectedDrillRebirth = nameOnly
+    end
+})
+
+ShopTab:CreateButton({
+    Name = "Buy Drill",
+    Callback = function()
+        if selectedDrillRebirth then
+            ReplicatedStorage:WaitForChild("Packages"):WaitForChild("Knit"):WaitForChild("Services"):WaitForChild("OreService"):WaitForChild("RE"):WaitForChild("BuyDrill"):FireServer(selectedDrillRebirth)
+        end
+    end
+})
+
+-- Storages Section
+local StoragesSection = ShopTab:CreateSection("Shop Storages")
+
+local StorageForRebirth = {
+    [0] = {"Standard Vault"},
+    [1] = {"Nano Pod"},
+    [2] = {"Drift Capsule"},
+    [3] = {"Eclipse Chamber"},
+    [4] = {"Astral Node"},
+}
+
+local StorageNameSet = {}
+for i = 0, rebirthsValue do
+    local storages = StorageForRebirth[i]
+    if storages then
+        for _, name in ipairs(storages) do
+            StorageNameSet[name] = true
+        end
+    end
+end
+
+local StoragesFolder = ReplicatedStorage:WaitForChild("Drills")
+local StoragesWithCost = {}
+
+for _, model in ipairs(StoragesFolder:GetChildren()) do
+    if model:IsA("Model") and StorageNameSet[model.Name] then
+        local cost = model:GetAttribute("Cost") or 0
+        table.insert(StoragesWithCost, {Name = model.Name, Cost = cost})
+    end
+end
+
+table.sort(StoragesWithCost, function(a, b)
+    return a.Cost < b.Cost
+end)
+
+local StoragedropdownOptions = {}
+for _, Storage in ipairs(StoragesWithCost) do
+    table.insert(StoragedropdownOptions, string.format("%s (Cost : %s)", Storage.Name, formatNumberWithCommas(Storage.Cost)))
+end
+
+local selectedStorageRebirth = nil
+
+ShopTab:CreateDropdown({
+    Name = "Select Storages",
+    Options = StoragedropdownOptions,
+    Callback = function(value)
+        local nameOnly = string.match(value[1], "^(.-) %(")
+        selectedStorageRebirth = nameOnly
+    end
+})
+
+ShopTab:CreateButton({
+    Name = "Buy Storage",
+    Callback = function()
+        if selectedStorageRebirth then
+            ReplicatedStorage:WaitForChild("Packages"):WaitForChild("Knit"):WaitForChild("Services"):WaitForChild("OreService"):WaitForChild("RE"):WaitForChild("BuyDrill"):FireServer(selectedStorageRebirth)
         end
     end
 })
