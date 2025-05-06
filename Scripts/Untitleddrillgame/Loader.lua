@@ -196,9 +196,16 @@ table.sort(drillsWithCost, function(a, b)
     return a.Cost < b.Cost
 end)
 
+local function formatNumberWithCommas(n)
+    local left, right = tostring(n):match("^([^%.]+)%.?(%d*)$")
+    left = string.reverse(left):gsub("(%d%d%d)", "%1,")
+    left = string.reverse(left):gsub("^,", "")
+    return right ~= "" and (left .. "." .. right) or left
+end
+
 local dropdownOptions = {}
 for _, drill in ipairs(drillsWithCost) do
-    table.insert(dropdownOptions, drill.Name)
+    table.insert(dropdownOptions, string.format("%s (Cost: %s)", drill.Name, formatNumberWithCommas(drill.Cost)))
 end
 
 local selectedDrill = nil
@@ -207,7 +214,8 @@ ShopTab:CreateDropdown({
     Name = "Select Drill",
     Options = dropdownOptions,
     Callback = function(value)
-        selectedDrill = value[1]
+        local nameOnly = string.match(value[1], "^(.-) %(")
+        selectedDrill = nameOnly
     end
 })
 
