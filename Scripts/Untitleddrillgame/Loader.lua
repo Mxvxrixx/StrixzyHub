@@ -251,7 +251,8 @@ UiTab:CreateDropdown({
     end
 })
 
-local lastMoveTime = tick()
+local jumpCooldown = 900
+local lastJumpTime = tick()
 
 game:GetService("RunService").Heartbeat:Connect(function()
     local player = game.Players.LocalPlayer
@@ -259,15 +260,10 @@ game:GetService("RunService").Heartbeat:Connect(function()
     local humanoid = character and character:FindFirstChildOfClass("Humanoid")
 
     if humanoid then
-        if (tick() - lastMoveTime) >= 900 then
+        if (tick() - lastJumpTime) >= jumpCooldown then
             humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+            lastJumpTime = tick()
         end
-    end
-end)
-
-game:GetService("UserInputService").InputChanged:Connect(function(input, gameProcessed)
-    if not gameProcessed then
-        lastMoveTime = tick()
     end
 end)
 
