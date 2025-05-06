@@ -105,6 +105,76 @@ MainTab:CreateToggle({
     end,
 })
 
+local RebirthSection = MainTab:CreateSection("Auto Rebirth")
+
+local ToggleAutoRebirth = false
+
+MainTab:CreateToggle({
+    Name = "Auto Rebirth",
+    CurrentValue = false,
+    Flag = "AutoRebirthToggle",
+    Callback = function(Value)
+        ToggleAutoRebirth = Value
+        if Value then
+            task.spawn(function()
+                while ToggleAutoRebirth do
+                    pcall(function()
+                        game:GetService("ReplicatedStorage"):WaitForChild("Packages"):WaitForChild("Knit"):WaitForChild("Services"):WaitForChild("RebirthService"):WaitForChild("RE"):WaitForChild("RebirthRequest"):FireServer()
+                    end)
+                    task.wait(0.1)
+                end
+            end)
+        end
+    end,
+})
+
+local ToggleAutoLock = false
+local selectedOreNames = {}
+
+local predefinedOreNames = {
+    ["Rebirth 1"] = {"Uranium", "Adamantite"},
+    ["Rebirth 2"] = {"Radiant Quartz", "Celestine"},
+    ["Rebirth 3"] = {"Obscurite", "Lunaris"},
+    ["Rebirth 4"] = {"Elerium", "Stellarite"},
+    ["Rebirth 5"] = {"Phantomite", "Bloodsteel"}
+}
+
+MainTab:CreateDropdown({
+    Name = "Select Lock Item Rebirth",
+    Options = {"Rebirth 1", "Rebirth 2", "Rebirth 3", "Rebirth 4", "Rebirth 5"},
+    Callback = function(value)
+        selectedOreNames = predefinedOreNames[value[1]]
+    end
+})
+
+MainTab:CreateToggle({
+    Name = "Auto Lock",
+    CurrentValue = false,
+    Flag = "AutoLockToggle",
+    Callback = function(Value)
+        ToggleAutoLock = Value
+        if Value then
+            task.spawn(function()
+                while ToggleAutoLock do
+                    pcall(function()
+                        local backpack = game:GetService("Players").LocalPlayer:FindFirstChild("Backpack")
+                        if backpack and #selectedOreNames > 0 then
+                            for _, item in ipairs(backpack:GetChildren()) do
+                                for _, oreName in ipairs(selectedOreNames) do
+                                    if item.Name == oreName and not item:GetAttribute("Locked") then
+                                        game:GetService("ReplicatedStorage"):WaitForChild("Packages"):WaitForChild("Knit"):WaitForChild("Services"):WaitForChild("OreService"):WaitForChild("RE"):WaitForChild("LockItem"):FireServer(item)
+                                    end
+                                end
+                            end
+                        end
+                    end)
+                    task.wait(0.2)
+                end
+            end)
+        end
+    end
+})
+
 local SellSelection = MainTab:CreateSection("Auto Sell")
 
 local ToggleSellAll = false
@@ -237,19 +307,6 @@ UiTab:CreateButton({
     Callback = function()
         loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/refs/heads/master/source"))()
     end,
-})
-
-local themes = {"Default","AmberGlow","Amethyst","Bloom","DarkBlue","Green","Light","Ocean","Serenity"}
-
-UiTab:CreateDropdown({
-    Name = "Themes UI",
-    Options = themes,
-    Flag = "SelectedTheme",
-    Callback = function(value)
-        selectedTheme = value[1]
-        Rayfield:Destroy()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/Mxvxrixx/StrixzyHub/refs/heads/main/Loader.lua"))()
-    end
 })
 
 local jumpCooldown = 900
