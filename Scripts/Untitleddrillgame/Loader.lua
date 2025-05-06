@@ -150,7 +150,6 @@ MainTab:CreateDropdown({
 MainTab:CreateToggle({
     Name = "Auto Lock",
     CurrentValue = false,
-    Flag = "AutoLockToggle",
     Callback = function(Value)
         ToggleAutoLock = Value
         if Value then
@@ -309,7 +308,7 @@ UiTab:CreateButton({
     end,
 })
 
-local jumpCooldown = 900
+local jumpCooldown = 600
 local lastJumpTime = tick()
 
 game:GetService("RunService").Heartbeat:Connect(function()
@@ -318,11 +317,12 @@ game:GetService("RunService").Heartbeat:Connect(function()
     local humanoid = character and character:FindFirstChildOfClass("Humanoid")
 
     if humanoid then
-        if (tick() - lastJumpTime) >= jumpCooldown then
+        if (tick() - lastJumpTime) >= jumpCooldown and humanoid:GetState() ~= Enum.HumanoidStateType.Jumping and humanoid:GetState() ~= Enum.HumanoidStateType.Freefall then
             humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
             lastJumpTime = tick()
         end
     end
 end)
+
 
 Rayfield:LoadConfiguration()
