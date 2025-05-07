@@ -58,16 +58,15 @@ MainTab:CreateToggle({
     Callback = function(Value)
         ToggleOreFarm = Value
         if Value then
-            -- Drill Equipment Logic
             local player = game.Players.LocalPlayer
             local backpack = player:WaitForChild("Backpack")
             local handDrillsFolder = ReplicatedStorage:WaitForChild("HandDrills")
-
+    
             local drillNames = {}
             for _, tool in ipairs(handDrillsFolder:GetChildren()) do
                 table.insert(drillNames, tool.Name)
             end
-
+    
             local function equipDrill()
                 for _, tool in ipairs(backpack:GetChildren()) do
                     if table.find(drillNames, tool.Name) then
@@ -80,9 +79,16 @@ MainTab:CreateToggle({
                     end
                 end
             end
-
+    
             equipDrill()
-
+    
+            player.CharacterAdded:Connect(function(char)
+                if ToggleOreFarm then
+                    task.wait(1)
+                    equipDrill()
+                end
+            end)
+    
             task.spawn(function()
                 while ToggleOreFarm do
                     pcall(function()
@@ -94,7 +100,7 @@ MainTab:CreateToggle({
                     task.wait(1)
                 end
             end)
-
+    
             task.spawn(function()
                 while ToggleOreFarm do
                     pcall(function()
@@ -104,7 +110,7 @@ MainTab:CreateToggle({
                 end
             end)
         end
-    end,
+    end
 })
 
 -- Auto Rebirth Section
