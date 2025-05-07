@@ -235,7 +235,7 @@ MainTab:CreateToggle({
                             task.wait(1)
 
                             for i = 1, 10 do
-                                SellAll:FireServer()
+                                game:GetService("ReplicatedStorage"):WaitForChild("Packages"):WaitForChild("Knit"):WaitForChild("Services"):WaitForChild("OreService"):WaitForChild("RE"):WaitForChild("SellAll"):FireServer()
                                 task.wait()
                             end
 
