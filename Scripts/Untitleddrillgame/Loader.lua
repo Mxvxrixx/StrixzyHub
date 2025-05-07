@@ -230,15 +230,17 @@ MainTab:CreateToggle({
 
                         if hrp then
                             local originalCFrame = hrp.CFrame
-                            hrp.CFrame = CFrame.new(Vector3.new(-395.50, 92.04, 269.37))
+                            hrp.CFrame = CFrame.new(Vector3.new(-399.45, 92.04, 267.60))
 
-                            task.wait(2)
+                            task.wait(1)
 
                             for i = 1, 10 do
                                 SellAll:FireServer()
                                 task.wait()
                             end
 
+                            task.wait(2)
+                            
                             hrp.CFrame = originalCFrame
                         end 
                     end)
